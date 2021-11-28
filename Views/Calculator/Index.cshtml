@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Calculator";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Calculator</h1>
+    <form name="calculateForm">
+        <div class="form-group col-md-3">
+            <input class="form-control" name="firstParam" type="number" />
+        </div>
+
+        <div class="form-group col-md-3">
+            <input class="form-control" name="secondParam" type="number" />
+        </div>
+
+        <div name="actions" class="panel-body">
+            <div name="plus" id="plus" value="+" class="btn btn-primary">+</div>
+            <div name="minus" id="minus" value="-" class="btn btn-primary">-</div>
+            <div name="multiply" id="multiply" value="*" class="btn btn-primary">*</div>
+            <div name="divide" id="divide" value="/" class="btn btn-primary">/</div>
+            <div name="degree" id="degree" value="^" class="btn btn-primary">^</div>
+            <div name="root" id="root" value="~" class="btn btn-primary">~</div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    const form = document.forms["calculateForm"];
+
+    async function Calculate(firstParam, secondParam, s) {
+
+        const response = await fetch("https://soa-calculator-service.herokuapp.com/api/calculator/calculate", {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body: JSON.stringify({
+                firstParam: parseFloat(firstParam),
+                secondParam: parseFloat(secondParam),
+                sign: s,
+            })
+        });
+
+        if (response.ok === true) {
+            const result = await response.json();
+            form.elements["firstParam"].value = result;
+            form.elements["secondParam"].value = 0;
+        }
+    }
+
+    const actions = [
+        "plus",
+        "minus",
+        "multiply",
+        "divide",
+        "degree",
+        "root"
+    ];
+
+    for (let el in actions) {
+        var elem = document.getElementById(actions[el]);
+        elem.onclick = function (e) {
+            e.preventDefault();
+            console.log(e.currentTarget.innerHTML);
+            var sign = elem.innerHTML;
+            const firstParam = form.elements["firstParam"].value;
+            const secondParam = form.elements["secondParam"].value;
+            Calculate(firstParam, secondParam, e.currentTarget.innerHTML);
+        };
+    }
+
+</script>
