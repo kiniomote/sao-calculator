@@ -21,7 +21,7 @@ namespace Lab1.Services
 
         public async Task<double> Calculate()
         {
-            using var channel = GrpcChannel.ForAddress("https://localhost:50051");
+            using var channel = GrpcChannel.ForAddress("https://soa-calculator-grpc.herokuapp.com");
             var client = new GrpcCalculator.GrpcCalculatorClient(channel);
 
             string token = await LoginGrpc(client);
